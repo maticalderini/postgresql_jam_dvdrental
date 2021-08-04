@@ -1,20 +1,20 @@
-# SQL Jam 1 - Revisiting SQL basics
-Most of my posts so far have been tutorials. While I really enjoy doing them, they take longer to write and everything has to be a lot more polished: there's nothing more frustrating and intimidating as a beginner than getting errors when following a tutorial. For those that liked my previous tutorials on matplotlib plotting, I am currently working hard to release a couple of new ones on pandas and general programming that (as I intend with all of my tutorials) will hopefully give you the tools to stop needing to read tutorials altogether.
+# PostgreSQL Jam - DVD rental 1
+For this first code jam, I decided to move away from Python, my true love, to revisit good ol' SQL. Often we just want to train the newest model or draw the fanciest plot and forget that data always has to come first and reliably getting this data, which might not always (I would even say, most often won't) come from humble *.csv*s, it is important to hone those basic SQL querying skills.
 
-While I finish those though, I decided to write a more casual, low-pressure post. I decided to move away from Python, my true love, to revisit good ol' SQL. Often we just want to train the newest model or draw the fanciest plot and forget that data always has to come first and reliably getting this data, which might not always (I would even say it most often won't) come from handy *.csv*s, it is important to hone those basic SQL querying skills.
+If you want to follow along, you can visit [this link](https://github.com/maticalderini/postgresql_jam_dvdrental) to access the repo containing the necessary Dockerfiles to get started quickly.
 
 Everything you'll see from the "Getting to know your database" section was written and coded as part of an informal, friendly jam with a simple rule: you put yourself a timer and play with the data as much as possible before your time runs out. With this format, you might not always get the cleanest, most efficient code, but it is really useful to get your hands dirty and practice often. Just like you would if you were training for any sport, learning a new language or any other skill.
 
-With that in mind, let's jump right into it.
+As I've mainly written tutorials in the past, at the beginning I took some instructional detours in terms of queries and text, but quickly moved to a more "to the point" style. If you would like for me to build a full-fleged SQL tuorial to explain the container set up and query syntax, please let me know and I'll get to it!
+
+With all of that in mind, let's jump right into it.
 
 ## The Database
-The database chose for this Jam is the freely available [PostgreSQL tutorial sample database](https://www.postgresqltutorial.com/postgresql-sample-database/). It consists of data of a dvd rental service (for those of you who still remember those) with info on films, rentals and customers. The whole thing looks like this:
+The database chosen for this Jam is the freely available [PostgreSQL tutorial sample database](https://www.postgresqltutorial.com/postgresql-sample-database/). It consists of data of a dvd rental service (for those of you who still remember those) with info on films, rentals and customers. The whole thing looks like this:
 
 ![db_diagram](dvd-rental-sample-database-diagram.png)
 
-But so far we only barely used the actor, film_actor and film tables.
-
-If you want to follow along, you can visit [this link](link to repo) to access the repo containing the necessary Dockerfiles to quickly get you started.
+But so far we only barely used the actor, film_actor and film tables. Also, most of the queries actually return a lot of rows, to avoid having long data tables, I chose to only show some of the first few rows. If you run the queries yourself, you'll be able to see all of the returned data.
 
 ## Getting to know the database
 This is the first time I worked with this database so let's first explore what it has to offer. A good start is to first find the tables that appear on the diagram
@@ -44,7 +44,7 @@ WHERE
 | dvdrental     | public       | payment       | BASE TABLE |
 | dvdrental     | public       | film          | BASE TABLE |
 
-More info on the different columns in the [official documentation](https://www.postgresql.org/docs/9.1/infoschema-tables.html)
+More info on the different columns in the [official documentation](https://www.postgresql.org/docs/9.1/infoschema-tables.html).
 
 The same query but without conditions:
 
@@ -69,7 +69,6 @@ FROM
 
 To see all the different types of table:
 
-* Different table_types
 ```SQL
 SELECT 
     DISTINCT "table_type" 
@@ -77,9 +76,8 @@ FROM
     information_schema.TABLES 
 ;
 ```
-VIEW and BASE TABLE are the only table types. Compared to the documentation above, we don't have any foreign tables or temporary tables. We can look at the table schemas.
+VIEW and BASE TABLE are the only table types. Compared to the documentation above, we don't have any foreign tables or temporary tables. We can look at the table schemas:
 
-* Different table_schema
 ```SQL
 SELECT 
     DISTINCT "table_schema"
@@ -89,7 +87,7 @@ FROM
 ```
 There are 3 schemas: public, pg_catalog, information_schema.
 
-Since we were interested in the actual tables (not views) of our dataset (not database info), earlier we chose to filer on the condition ```WHERE "table_schema" = 'public' AND "table_type" = 'BASE TABLE'```.
+Since we were interested in the actual tables (not views) of our dataset (not database info), earlier we chose to filter on the condition ```WHERE "table_schema" = 'public' AND "table_type" = 'BASE TABLE'```.
 
 We will forget about views for now since we don't want to take any shortcuts to querying the data ourselves.
 
@@ -144,7 +142,7 @@ WHERE
 | first_name  | character varying           |	
 | last_name   | character varying           |
 
-of course, a view of the table itself:
+of course, a glimpse of the table itself:
 ```SQL
 SELECT 
     *
@@ -246,7 +244,7 @@ ORDER BY
     "first_name" ASC
 ;
 ```
-While we use ```COUNT("first_name")```, twice, it is actualy only calculated once. For a solution that can explicitely use the "counts" alias (which I tend to prefer for eradability), we can instead use a subquery (check out [this stackoverflow link](https://stackoverflow.com/questions/2102373/referring-to-dynamic-columns-in-a-postgres-query/2102391) for more info):
+While we use ```COUNT("first_name")```, twice, it is actualy only calculated once. For a solution that can explicitely use the "counts" alias (which I tend to prefer for readability), we can instead use a subquery (check out [this stackoverflow link](https://stackoverflow.com/questions/2102373/referring-to-dynamic-columns-in-a-postgres-query/2102391) for more info):
 
 ```SQL
 SELECT
@@ -268,7 +266,7 @@ ORDER BY
 ;
 ```
 
-We can use thess subqueries to get only the data about actors with repeated names:
+We can use these subqueries to get only the data about actors with repeated names:
 
 ```SQL
 SELECT
@@ -488,6 +486,8 @@ ORDER BY
 | 12           | 6                     |	
 | 13           | 6                     |	
 | 15           | 1                     |
+
+> Note for clarity added after time run out: This table essentially means that there were 195 movies with 5 actors, 150 movies with 6 actors and so on.
 
 We can also see if different actors often play together. For that we will use WITH to alleviate the main query a bit:
 ```SQL
