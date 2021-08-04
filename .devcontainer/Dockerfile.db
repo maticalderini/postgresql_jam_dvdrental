@@ -1,0 +1,10 @@
+FROM postgres:latest
+
+RUN  apt-get update \
+  && apt-get install -y wget \
+  && apt-get install -y unzip \
+  && rm -rf /var/lib/apt/lists/*
+
+
+ADD ./src/db_setup.sh /docker-entrypoint-initdb.d/
+RUN chmod 777 /docker-entrypoint-initdb.d/db_setup.sh # Do I need this???

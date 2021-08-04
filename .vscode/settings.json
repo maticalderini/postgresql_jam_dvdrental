@@ -1,0 +1,24 @@
+{
+    "sqltools.connections": [
+        {
+            "name": "Container database",
+            "driver": "PostgreSQL",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "database": "postgres",
+            "username": "postgres",
+            "password": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "dvdrental_conn",
+            "database": "dvdrental",
+            "username": "postgres",
+            "password": "postgres"
+        }
+    ]
+}
